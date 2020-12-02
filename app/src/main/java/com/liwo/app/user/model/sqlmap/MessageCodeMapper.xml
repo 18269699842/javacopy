@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liwo.app.user.dao.MessageCodeDao">
+
+    <!-- 实体对象和数据库表映射 -->
+    <resultMap id="getMessageCodeModel" type="com.liwo.app.user.model.MessageCodeModel">
+        <id column="id" property="id" />
+        <result column="mobile" property="mobile" />
+        <result column="msgCode" property="msgCode" />
+        <result column="create_time" property="createTime" />
+        <result column="expire_time" property="expireTime" />
+    </resultMap>
+
+    <insert id="add" parameterType="com.liwo.app.user.model.MessageCodeModel">
+        <![CDATA[
+          INSERT INTO app_user_pre_reg(mobile, msgcode, create_time, expire_time)
+          VALUES (#{mobile}, #{msgCode}, #{createTime}, #{expireTime})
+        ]]>
+    </insert>
+
+    <delete id="remove" parameterType="String">
+        <![CDATA[
+          DELETE FROM app_user_pre_reg WHERE mobile=#{mobile}
+        ]]>
+    </delete>
+
+    <select id="getMsgcodeByMobile" parameterType="String" resultType="List">
+        <![CDATA[
+          SELECT msgcode FROM app_user_pre_reg WHERE mobile=#{accountId}
+        ]]>
+    </select>
+
+</mapper>

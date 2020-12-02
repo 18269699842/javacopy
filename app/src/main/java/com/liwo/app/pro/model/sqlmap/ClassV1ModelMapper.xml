@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liwo.app.pro.dao.ClassV1Dao">
+
+
+    <resultMap id="classV1ModelResult" type="com.liwo.app.pro.model.ClassV1Model">
+		<result column="v1_class_id" property="classId" />
+		<result column="v1_class_name" property="className" />
+		<result column="v1_class_image" property="classImage" />
+        <collection property="classV2ModelList" resultMap="classV2ModelListResult" />
+
+	</resultMap>
+
+    <resultMap id="classV2ModelListResult" type="com.liwo.app.pro.model.ClassV2Model">
+        <result column="v2_class_id" property="classId" />
+        <result column="v2_class_name" property="className" />
+        <result column="v2_class_image" property="classImage" />
+        <collection property="classV3ModelList" resultMap="classV3ModelListResult" />
+    </resultMap>
+
+    <resultMap id="classV3ModelListResult" type="com.liwo.app.pro.model.ClassV3Model">
+        <result column="v3_class_id" property="classId" />
+        <result column="v3_class_name" property="className" />
+        <result column="v3_class_image" property="classImage" />
+    </resultMap>
+
+    <!--查询产品分类-->
+	<select id="queryClassV1" resultMap="classV1ModelResult" parameterType="com.liwo.app.pro.req.ClassV1Req">
+        SELECT t1.class_id v1_class_id,t1.class_name v1_class_name,t1.class_image v1_class_image,
+        t2.class_id v2_class_id,t2.class_name v2_class_name,t2.class_image v2_class_image,t2.parent_id v2_parent_id,
+        t3.class_id v3_class_id,t3.class_name v3_class_name,t3.class_image v3_class_image,t3.parent_id v3_parent_id
+        FROM app_pro_class_v1 t1 LEFT JOIN app_pro_class_v2 t2 ON t1.class_id=t2.parent_id
+				                  LEFT JOIN app_pro_class_v3 t3 ON t2.class_id=t3.parent_id
+	</select>
+</mapper>

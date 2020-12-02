@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liwo.app.user.dao.AddressDao">
+
+	<!-- 实体对象和数据库表映射 -->
+    <resultMap id="getUserAddressList" type="com.liwo.app.user.model.AddressModel">
+		<id column="id" property="id" />
+		<result column="isdefault" property="isDefault" />
+		<result column="consignee" property="consignee" />
+		<result column="mobile" property="mobile" />
+		<result column="province" property="province" />
+		<result column="city" property="city" />
+		<result column="district" property="district" />
+		<result column="details" property="details" />
+		<result column="zipcode" property="zipcode" />
+	</resultMap>
+
+	<!-- 查询用户收货地址 -->
+	<select id="queryUserAddress" parameterType="com.liwo.app.user.req.AddressListReq" resultMap="getUserAddressList">
+		<![CDATA[
+		  SELECT id,isdefault,consignee,accountId,province,city,district,details,zipcode
+		  FROM app_user_address
+		  WHERE accountid=#{accountId}
+		  ORDER BY isdefault DESC
+		  limit #{start},#{end}
+		]]>
+	</select>
+
+	<!-- 新增收货地址 -->
+	<insert id="addUserAddress" parameterType="com.liwo.app.user.req.AddressAddReq">
+		<![CDATA[
+			INSERT INTO app_user_address(consignee,mobile,province,city,district,details,zipcode,accountid)
+			VALUES (#{consignee}, #{mobile}, #{province}, #{city}, #{district}, #{details}, #{zipcode}, #{accountId})
+		]]>
+	</insert>
+
+	<!-- 判断用户是是否有默认收货地址 -->
+	<select id="countDefaultAddress" parameterType="com.liwo.app.user.req.AddressModifyReq" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT COUNT(*)
+			FROM app_user_address
+			WHERE accountid=#{accountId} AND id<>#{id} AND isdefault='Y'
+		]]>
+	</select>
+
+	<!-- 更新收获地址 -->
+	<update id="modifyUserAddress" parameterType="com.liwo.app.user.req.AddressModifyReq">
+		<![CDATA[
+			UPDATE app_user_address
+			SET isDefault=#{isDefault}, consignee=#{consignee}, mobile=#{mobile}, province=#{province}, city=#{city}, district=#{district}, details=#{details}, zipcode=#{zipcode}
+			WHERE accountid=#{accountId} AND id=#{id}
+		]]>
+	</update>
+
+	<!-- 删除用户收获地址 -->
+	<delete id="removeUserAddress" parameterType="com.liwo.app.user.req.AddressRemoveReq">
+		<![CDATA[
+			DELETE FROM app_user_address WHERE id=#{id}
+		]]>
+	</delete>
+
+</mapper>

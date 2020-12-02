@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liwo.app.pro.dao.ConsumableDao">
+
+    <!--产品实体类(略缩实体)映射-->
+    <resultMap id="consumableModelResult" type="com.liwo.app.pro.model.ConsumableModel">
+		<result column="cs_id" property="csId" />
+		<result column="cs_name" property="csName" />
+		<result column="cs_mkprice" property="csMkprice" />
+        <result column="cs_price" property="csProice" />
+        <result column="cs_standard" property="csStandard" />
+        <result column="cs_introduce" property="csIntroduce" />
+        <result column="sold" property="sold" />
+        <result column="ci_logo" property="ciLogo" />
+	</resultMap>
+
+    <!--产品明细映射类-->
+    <resultMap id="consumableDetailModelResult" type="com.liwo.app.pro.model.ConsumableDetailModel">
+        <result column="cs_id" property="csId" />
+        <result column="cs_name" property="csName" />
+        <result column="cs_price" property="csPrice" />
+        <result column="cs_standard" property="csStandard" />
+        <result column="cs_mkprice" property="csMkprice" />
+        <result column="sold" property="sold" />
+        <result column="num" property="num" />
+        <result column="service1" property="service1" />
+        <result column="service2" property="service2" />
+        <result column="service3" property="service3" />
+        <result column="service4" property="service4" />
+        <result column="cs_detail" property="csDetail" />
+        <result column="cs_feature" property="csFeature" />
+        <result column="ci_detail" property="ciDetail" />
+        <result column="ci_image1" property="ciImage1" />
+        <result column="ci_image2" property="ciImage2" />
+        <result column="ci_image3" property="ciImage3" />
+        <result column="ci_image4" property="ciImage4" />
+        <result column="cs_introduce" property="csIntroduce" />
+        <result column="class_id" property="classId" />
+        <collection property="similarList" resultMap="consumableSimilarResult" />
+    </resultMap>
+
+    <!--产品相似实体映射类-->
+    <resultMap id="consumableSimilarResult" type="com.liwo.app.pro.model.ConsumableSimilar">
+        <result column="similar_cs_id" property="csId" />
+        <result column="similar_cs_name" property="csName" />
+        <result column="similar_cs_mkprice" property="csMkprice" />
+        <result column="similar_cs_price" property="csProice" />
+        <result column="similar_cs_standard" property="csStandard" />
+        <result column="similar_cs_introduce" property="csIntroduce" />
+        <result column="similar_sold" property="sold" />
+        <result column="similar_ci_logo" property="ciLogo" />
+    </resultMap>
+
+    <!--查询产品分类-->
+	<select id="queryConsumableList" resultMap="consumableModelResult" parameterType="com.liwo.app.pro.req.ConsumableReq">
+        SELECT cs_id,cs_name,cs_mkprice,cs_price,cs_standard,cs_introduce,sold,ci_logo
+        FROM app_pro_consumable
+        WHERE class_id=#{classId}
+        <if test="csName!=null">
+            AND cs_name LIKE "%#{csName}%"
+        </if>
+        <if test="sort!=null">
+            ORDER BY #{sort}
+        </if>
+        LIMIT #{start},#{end}
+	</select>
+
+    <!--查询产品明细-->
+    <select id="queryConsumableDetailModel" resultMap="consumableDetailModelResult" parameterType="java.lang.String">
+        SELECT t1.cs_id,t1.cs_name,t1.cs_price,t1.cs_standard,t1.cs_mkprice,t1.sold,t1.num,
+        t1.service1,t1.service2,t1.service3,t1.service4,t1.cs_detail,t1.cs_feature,t1.ci_detail,
+        t1.ci_image1,t1.ci_image2,t1.ci_image3,t1.ci_image4,t1.cs_introduce,t1.class_id,
+        t3.cs_id similar_cs_id,t3.cs_name similar_cu_name,t3.cs_mkprice similar_cs_mkprice,
+        t3.cs_price similar_cs_price,t3.cs_standard similar_cs_standard,t3.cs_introduce similar_cs_introduce,
+        t3.sold similar_sold,t3.ci_logo similar_ci_logo
+        FROM app_pro_consumable t1 LEFT JOIN app_pro_similar t2 ON t1.cs_id=t2.cs_id
+                                   LEFT JOIN app_pro_consumable t3 ON t2.similar=t3.cs_id
+        WHERE t1.cs_id=#{cId}
+    </select>
+</mapper>

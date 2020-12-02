@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liwo.app.user.dao.AccountDao">
+
+    <!--个人信息实体映射-->
+    <resultMap id="infoDetailsModelResult" type="com.liwo.app.user.model.InfoDetailsModel">
+        <result column="realname" property="realname" />
+        <result column="phone" property="phone" />
+        <result column="gender" property="gender" />
+        <result column="birthdate" property="birthdate" />
+        <result column="nickname" property="nickname" />
+        <result column="head_url" property="headUrl" />
+    </resultMap>
+
+    <!--根据账户密码查询账户信息-->
+	<select id="queryAccountByIdAndPwd" resultType="long" parameterType="com.liwo.app.user.req.AccountLoginReq" >
+	    SELECT COUNT(id) acc_count FROM app_user_account WHERE account_id=#{accountId} AND PASSWORD=#{passwd}
+	</select>
+
+    <!--查询用户信息-->
+    <select id="queryInfoDetails" resultMap="infoDetailsModelResult" parameterType="com.liwo.app.user.req.InfoDetailsReq">
+        SELECT realname,phone,gender,birthdate,nickname,head_url FROM app_user_account WHERE account_id=#{accountId}
+    </select>
+
+    <!--修改用户信息-->
+    <update id="updateUserInfo" parameterType="com.liwo.app.user.req.InfoModifyReq">
+        UPDATE app_user_account SET realname=#{realname},phone=#{phone},gender=#{gender},birthdate=#{birthdate},nickname=#{nickname},head_url=#{headUrl}
+        WHERE account_id=#{accountId}
+    </update>
+
+    <!--新增-->
+    <insert id="registerUserAccount" parameterType="com.liwo.app.user.req.RegisterReq">
+      <![CDATA[
+          INSERT INTO app_user_account (account_id, password, register_time)
+          VALUES (#{accountId}, #{passwd}, now())
+        ]]>
+    </insert>
+
+    <!--获取记录数-->
+    <select id="countAccountId" parameterType="String" resultType="Integer">
+      <![CDATA[
+          SELECT COUNT(id) FROM app_user_account WHERE account_id=#{accountId}
+        ]]>
+    </select>
+</mapper>

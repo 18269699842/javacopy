@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.liwo.app.pro.dao.MyShopDao">
+
+    <!--产品实体类(略缩实体)映射-->
+    <resultMap id="myShopModelResult" type="com.liwo.app.pro.model.MyShopModel">
+		<result column="ms_id" property="msId" />
+        <result column="cs_id" property="csId" />
+        <result column="cs_name" property="csName" />
+        <result column="num" property="num" />
+        <result column="cs_price" property="price" />
+        <result column="ci_logo" property="ciLogo" />
+	</resultMap>
+
+    <!--购物车表实体映射类-->
+    <resultMap id="MyShopModelV2" type="com.liwo.app.pro.model.MyShopModelV2">
+        <result column="ms_id" property="msId" />
+        <result column="cs_id" property="csId" />
+        <result column="num" property="num" />
+        <result column="acc_id" property="accId" />
+    </resultMap>
+
+    <!--查询产品分类-->
+	<select id="queryMyShopModel" resultMap="myShopModelResult" parameterType="com.liwo.app.pro.req.MyShopReq">
+        SELECT t1.ms_id,t2.cs_id,t2.cs_name,t1.num,t2.cs_price,t2.ci_logo FROM app_pro_myshop t1
+	    LEFT JOIN app_pro_consumable t2 ON t1.cs_id=t2.cs_id
+	    where acc_id=#{accountId}
+        LIMIT #{start},#{end}
+	</select>
+
+    <!--购物车添加-->
+    <insert id="addMyShop" parameterType="com.liwo.app.pro.req.MyShopAddReq">
+        INSERT INTO app_pro_myshop(cs_id,num,acc_id)
+        VALUES(#{csId},#{num},#{accountId})
+    </insert>
+
+    <!--购物车删除-->
+    <delete id="deleteMyShop" parameterType="com.liwo.app.pro.req.MyShopDeleteReq">
+        DELETE FROM app_pro_myshop WHERE ms_id=#{msId}
+    </delete>
+
+    <!--购物车修改-->
+    <update id="updateMyShop" parameterType="com.liwo.app.pro.req.MyShopUpdateReq">
+        UPDATE app_pro_myshop SET num=#{num} WHERE ms_id=#{msId} AND acc_id=#{accountId}
+    </update>
+
+    <!--查询购物车-->
+    <select id="queryMyShopModelV2" resultMap="MyShopModelV2" parameterType="com.liwo.app.pro.req.MyShopAddReq">
+        SELECT ms_id,cs_id,num,acc_id FROM app_pro_myshop WHERE cs_id=#{csId} and acc_id=#{accountId}
+    </select>
+</mapper>
